@@ -444,6 +444,7 @@ pub struct CreateChatCompletionRequest {
     /// Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
     ///
     /// [See more information about frequency and presence penalties.](https://platform.openai.com/docs/api-reference/parameter-details)
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     pub presence_penalty: Option<f32>, // min: -2.0, max: 2.0, default 0
 
@@ -522,6 +523,12 @@ pub enum FinishReason {
     ToolCalls,
     ContentFilter,
     FunctionCall,
+    #[serde(alias = "STOP")]
+    StopUpperCase,
+    #[serde(alias = "end_turn")]
+    EndTurn,
+    #[serde(alias = "MAX_TOKENS")]
+    MaxTokens,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
@@ -652,5 +659,9 @@ pub struct CreateChatCompletionStreamResponse {
     /// Can be used in conjunction with the `seed` request parameter to understand when backend changes have been made that might impact determinism.
     pub system_fingerprint: Option<String>,
     /// The object type, which is always `chat.completion.chunk`.
-    pub object: String,
+    pub object: Option<String>,
+    /// The reason the model stopped generating tokens.
+    pub finish_reason: Option<String>,
+    /// The timestamp when the response was generated, in Unix time (seconds).
+    pub response_timestamp: Option<u32>,
 }
