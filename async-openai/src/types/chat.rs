@@ -529,6 +529,7 @@ pub enum FinishReason {
     EndTurn,
     #[serde(alias = "MAX_TOKENS")]
     MaxTokens,
+    Error,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
