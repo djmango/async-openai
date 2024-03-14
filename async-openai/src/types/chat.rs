@@ -530,6 +530,8 @@ pub enum FinishReason {
     #[serde(alias = "MAX_TOKENS")]
     MaxTokens,
     Error,
+    #[serde(alias = "OTHER")]
+    Other,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
