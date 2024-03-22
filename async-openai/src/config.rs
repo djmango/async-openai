@@ -1,5 +1,7 @@
 //! Client configurations: [OpenAIConfig] for OpenAI, [AzureConfig] for Azure OpenAI Service.
-use reqwest::header::{HeaderMap, AUTHORIZATION};
+use std::collections::HashMap;
+
+use reqwest::header::{HeaderMap, HeaderName, AUTHORIZATION};
 use secrecy::{ExposeSecret, Secret};
 use serde::Deserialize;
 
@@ -30,6 +32,7 @@ pub struct OpenAIConfig {
     api_base: String,
     api_key: Secret<String>,
     org_id: String,
+    additional_headers: HashMap<String, String>,
 }
 
 impl Default for OpenAIConfig {
@@ -40,6 +43,7 @@ impl Default for OpenAIConfig {
                 .unwrap_or_else(|_| "".to_string())
                 .into(),
             org_id: Default::default(),
+            additional_headers: Default::default(),
         }
     }
 }
@@ -68,6 +72,12 @@ impl OpenAIConfig {
         self
     }
 
+    /// Add additional headers to the request
+    pub fn with_additional_headers(mut self, headers: HashMap<String, String>) -> Self {
+        self.additional_headers.extend(headers);
+        self
+    }
+
     pub fn org_id(&self) -> &str {
         &self.org_id
     }
@@ -90,6 +100,12 @@ impl Config for OpenAIConfig {
                 .parse()
                 .unwrap(),
         );
+
+        // Add additional headers
+        for (key, value) in &self.additional_headers {
+            let header_name = HeaderName::from_bytes(key.as_bytes()).unwrap();
+            headers.insert(header_name, value.parse().unwrap());
+        }
 
         // hack for Assistants APIs
         // Calls to the Assistants API require that you pass a Beta header
