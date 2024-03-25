@@ -72,6 +72,11 @@ impl OpenAIConfig {
         self
     }
 
+    /// Get the API base url
+    pub fn get_api_base(&self) -> &str {
+        &self.api_base
+    }
+
     /// Add additional headers to the request
     pub fn with_additional_headers(mut self, headers: HashMap<String, String>) -> Self {
         self.additional_headers.extend(headers);
