@@ -513,6 +513,23 @@ pub struct CreateChatCompletionRequest {
     #[deprecated]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub functions: Option<Vec<ChatCompletionFunctions>>,
+
+    /// KeywordsAI
+    /// Specify the list of models for the router to choose between. If not specified, all models will be used. See the list of models here
+    /// If only one model is specified, it will be treated as if the model parameter is used and the router will not trigger.
+    /// When the model parameter is used, the router will not trigger, and this parameter behaves as fallback_models.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub models: Option<Vec<String>>,
+
+    /// KeywordsAI
+    /// Use this as a tag to identify the user associated with the API call.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub customer_identifier: Option<String>,
+
+    /// KeywordsAI
+    /// When set to true, only the request and the performance metrics will be recorded, input and output messages will be omitted from the log.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub disable_log: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
