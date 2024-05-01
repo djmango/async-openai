@@ -305,12 +305,6 @@ pub struct ChatCompletionFunctions {
     pub parameters: serde_json::Value,
 }
 
-#[derive(Clone, Serialize, Debug, Deserialize, PartialEq)]
-pub enum ChatCustomerCredentialsValue {
-    HashMap(HashMap<String, String>),
-    String(String),
-}
-
 #[derive(Clone, Serialize, Default, Debug, Deserialize, Builder, PartialEq)]
 #[builder(name = "FunctionObjectArgs")]
 #[builder(pattern = "mutable")]
@@ -540,7 +534,7 @@ pub struct CreateChatCompletionRequest {
     /// KeywordsAI
     /// Add customer_credentials parameter in your request body to use your own credits.
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_credentials: Option<HashMap<String, ChatCustomerCredentialsValue>>,
+    pub customer_credentials: Option<HashMap<String, serde_json::Value>>,
 
     /// KeywordsAI
     /// When set to true, only the request and the performance metrics will be recorded, input and output messages will be omitted from the log.
