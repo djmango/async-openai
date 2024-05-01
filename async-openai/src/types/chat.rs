@@ -528,6 +528,11 @@ pub struct CreateChatCompletionRequest {
     pub models: Option<Vec<String>>,
 
     /// KeywordsAI
+    /// Keywords AI will catch any errors occurring in a request to model and fall back to the list of models you specified in the fallback field. This is useful to avoid downtime and ensure that your application is always available.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub fallback: Option<Vec<String>>,
+
+    /// KeywordsAI
     /// Use this as a tag to identify the user associated with the API call.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_identifier: Option<String>,
