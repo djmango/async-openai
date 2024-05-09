@@ -532,6 +532,11 @@ pub struct CreateChatCompletionRequest {
     pub customer_identifier: Option<String>,
 
     /// KeywordsAI
+    /// This is the email address of the user associated with the API call.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub customer_email: Option<String>,
+
+    /// KeywordsAI
     /// Add customer_credentials parameter in your request body to use your own credits.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub customer_credentials: Option<HashMap<String, serde_json::Value>>,
