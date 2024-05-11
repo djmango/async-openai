@@ -23,8 +23,10 @@
 
 - It's based on [OpenAI OpenAPI spec](https://github.com/openai/openai-openapi)
 - Current features:
-  - [x] Assistants (Beta)
+  - [x] Assistants v2
+  - [ ] Assistants v2 streaming
   - [x] Audio
+  - [x] Batch
   - [x] Chat
   - [x] Completions (Legacy)
   - [x] Embeddings
@@ -34,7 +36,6 @@
   - [x] Microsoft Azure OpenAI Service
   - [x] Models
   - [x] Moderations
-  - [x] WASM support (experimental and only available in [`experiments`](https://github.com/64bit/async-openai/tree/experiments) branch)
 - Support SSE streaming on available APIs
 - All requests including form submissions (except SSE streaming) are retried with exponential backoff when [rate limited](https://platform.openai.com/docs/guides/rate-limits) by the API server.
 - Ergonomic builder pattern for all request objects.
@@ -112,7 +113,7 @@ A good starting point would be to look at existing [open issues](https://github.
 
 To maintain quality of the project, a minimum of the following is a must for code contribution:
 - **Names & Documentation**: All struct names, field names and doc comments are from OpenAPI spec. Nested objects in spec without names leaves room for making appropriate name.
-- **Tested**: Examples are primary means of testing and should continue to work. For new features supporting example is required.
+- **Tested**:  For changes supporting test(s) and/or example is required. Existing examples, doc tests, unit tests, and integration tests should be made to work with the changes if applicable.
 - **Scope**: Keep scope limited to APIs available in official documents such as [API Reference](https://platform.openai.com/docs/api-reference) or [OpenAPI spec](https://github.com/openai/openai-openapi/). Other LLMs or AI Providers offer OpenAI-compatible APIs, yet they may not always have full parity. In such cases, the OpenAI spec takes precedence.
 - **Consistency**: Keep code style consistent across all the "APIs" that library exposes; it creates a great developer experience.
 
@@ -120,7 +121,7 @@ This project adheres to [Rust Code of Conduct](https://www.rust-lang.org/policie
 
 ## Complimentary Crates
 - [openai-func-enums](https://github.com/frankfralick/openai-func-enums) provides procedural macros that make it easier to use this library with OpenAI API's tool calling feature. It also provides derive macros you can add to existing [clap](https://github.com/clap-rs/clap) application subcommands for natural language use of command line tools. It also supports openai's [parallel tool calls](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling) and allows you to choose between running multiple tool calls concurrently or own their own OS threads.
-
+- [async-openai-wasm](https://github.com/ifsheldon/async-openai-wasm) provides WASM support.
 
 ## License
 
