@@ -2,7 +2,7 @@ use std::{collections::HashMap, pin::Pin};
 
 use derive_builder::Builder;
 use futures::Stream;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 
 use crate::error::OpenAIError;
 
@@ -254,21 +254,6 @@ impl ChatCompletionRequestMessage {
         }
     }
 }
-
-// #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-// #[serde(tag = "role")]
-// pub enum ChatCompletionRequestMessage {
-//     #[serde(rename = "System")]
-//     System(ChatCompletionRequestSystemMessage),
-//     #[serde(rename = "User")]
-//     User(ChatCompletionRequestUserMessage),
-//     #[serde(rename = "Assistant")]
-//     Assistant(ChatCompletionRequestAssistantMessage),
-//     #[serde(rename = "Tool")]
-//     Tool(ChatCompletionRequestToolMessage),
-//     #[serde(rename = "Function")]
-//     Function(ChatCompletionRequestFunctionMessage),
-// }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct ChatCompletionMessageToolCall {
