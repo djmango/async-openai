@@ -3,6 +3,7 @@ use std::{collections::HashMap, pin::Pin};
 use derive_builder::Builder;
 use futures::Stream;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::error::OpenAIError;
 
@@ -393,6 +394,14 @@ pub enum ChatCompletionToolChoiceOption {
     Named(ChatCompletionNamedToolChoice),
 }
 
+/// Invisibility Inc options, used to control the Invisibility API.
+#[derive(Clone, Serialize, Default, Debug, Deserialize, PartialEq)]
+pub struct InvisibilityMetadata {
+    pub chat_id: Uuid,
+    pub message_id: Uuid,
+    pub internet: Option<bool>,
+}
+
 #[derive(Clone, Serialize, Default, Debug, Builder, Deserialize, PartialEq)]
 #[builder(name = "CreateChatCompletionRequestArgs")]
 #[builder(pattern = "mutable")]
@@ -512,6 +521,11 @@ pub struct CreateChatCompletionRequest {
     #[deprecated]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub functions: Option<Vec<ChatCompletionFunctions>>,
+
+    /// Invisibility Inc
+    /// An object containing all the relevant information for Invisibiltiy API
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub invisibility: Option<InvisibilityMetadata>,
 
     /// KeywordsAI
     /// Specify the list of models for the router to choose between. If not specified, all models will be used. See the list of models here
