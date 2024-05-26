@@ -398,8 +398,15 @@ pub enum ChatCompletionToolChoiceOption {
 #[derive(Clone, Serialize, Default, Debug, Deserialize, PartialEq)]
 pub struct InvisibilityMetadata {
     pub chat_id: Uuid,
-    pub message_id: Uuid,
-    pub internet: Option<bool>,
+    /// The ID of the user message, the prompt
+    pub user_message_id: Uuid,
+    /// The ID of the assistant message, the response
+    // pub assistant_message_id: Uuid,
+    /// A list of booleans indicating whether to show files from the request. If not included the api will default to showing all files.
+    pub show_files_to_user: Option<Vec<bool>>,
+    /// A bool to indicate wether this is a regenerate call, meaning the api should invalidate the
+    /// history from the provided message_id onwards and generate a new response.
+    pub regenerate_from_message_id: Option<Uuid>,
 }
 
 #[derive(Clone, Serialize, Default, Debug, Builder, Deserialize, PartialEq)]
