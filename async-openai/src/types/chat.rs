@@ -117,14 +117,12 @@ pub struct ChatCompletionRequestSystemMessage {
 #[builder(derive(Debug))]
 #[builder(build_fn(error = "OpenAIError"))]
 pub struct ChatCompletionRequestMessageContentPartText {
-    #[builder(default = "\"text\".into()")]
-    pub r#type: String,
     pub text: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
-pub enum ImageUrlDetail {
+pub enum ImageDetail {
     #[default]
     Auto,
     Low,
@@ -141,7 +139,7 @@ pub struct ImageUrl {
     /// Either a URL of the image or the base64 encoded image data.
     pub url: String,
     /// Specifies the detail level of the image. Learn more in the [Vision guide](https://platform.openai.com/docs/guides/vision/low-or-high-fidelity-image-understanding).
-    pub detail: ImageUrlDetail,
+    pub detail: Option<ImageDetail>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default, Clone, Builder, PartialEq)]
@@ -151,16 +149,15 @@ pub struct ImageUrl {
 #[builder(derive(Debug))]
 #[builder(build_fn(error = "OpenAIError"))]
 pub struct ChatCompletionRequestMessageContentPartImage {
-    #[builder(default = "\"image_url\".into()")]
-    pub r#type: String,
     pub image_url: ImageUrl,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(untagged)]
+#[serde(tag = "type")]
+#[serde(rename_all = "snake_case")]
 pub enum ChatCompletionRequestMessageContentPart {
     Text(ChatCompletionRequestMessageContentPartText),
-    Image(ChatCompletionRequestMessageContentPartImage),
+    ImageUrl(ChatCompletionRequestMessageContentPartImage),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -235,7 +232,8 @@ pub struct ChatCompletionRequestFunctionMessage {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(tag = "role", rename_all = "lowercase")]
+#[serde(tag = "role")]
+#[serde(rename_all = "lowercase")]
 pub enum ChatCompletionRequestMessage {
     System(ChatCompletionRequestSystemMessage),
     User(ChatCompletionRequestUserMessage),
@@ -488,6 +486,9 @@ pub struct CreateChatCompletionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub stream: Option<bool>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stream_options: Option<ChatCompletionStreamOptions>,
+
     /// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random,
     /// while lower values like 0.2 will make it more focused and deterministic.
     ///
@@ -515,15 +516,20 @@ pub struct CreateChatCompletionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user: Option<String>,
 
-    /// Controls how the model responds to function calls.
-    /// "none" means the model does not call a function, and responds to the end-user.
-    /// "auto" means the model can pick between an end-user or calling a function.
-    /// Specifying a particular function via `{"name":\ "my_function"}` forces the model to call that function.
-    /// "none" is the default when no functions are present. "auto" is the default if functions are present.
+    /// Deprecated in favor of `tool_choice`.
+    ///
+    /// Controls which (if any) function is called by the model.
+    /// `none` means the model will not call a function and instead generates a message.
+    /// `auto` means the model can pick between generating a message or calling a function.
+    /// Specifying a particular function via `{"name": "my_function"}` forces the model to call that function.
+    ///
+    /// `none` is the default when no functions are present. `auto` is the default if functions are present.
     #[deprecated]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub function_call: Option<ChatCompletionFunctionCall>,
 
+    /// Deprecated in favor of `tools`.
+    ///
     /// A list of functions the model may generate JSON inputs for.
     #[deprecated]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -565,6 +571,13 @@ pub struct CreateChatCompletionRequest {
     /// When set to true, only the request and the performance metrics will be recorded, input and output messages will be omitted from the log.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_log: Option<bool>,
+}
+
+/// Options for streaming response. Only set this when you set `stream: true`.
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
+pub struct ChatCompletionStreamOptions {
+    /// If set, an additional chunk will be streamed before the `data: [DONE]` message. The `usage` field on this chunk shows the token usage statistics for the entire request, and the `choices` field will always be an empty array. All other chunks will also include a `usage` field, but with a null value.
+    pub include_usage: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
@@ -703,7 +716,7 @@ pub struct ChatChoiceStream {
 pub struct CreateChatCompletionStreamResponse {
     /// A unique identifier for the chat completion. Each chunk has the same ID.
     pub id: String,
-    /// A list of chat completion choices. Can be more than one if `n` is greater than 1.
+    /// A list of chat completion choices. Can contain more than one elements if `n` is greater than 1. Can also be empty for the last chunk if you set `stream_options: {"include_usage": true}`.
     pub choices: Vec<ChatChoiceStream>,
 
     /// The Unix timestamp (in seconds) of when the chat completion was created. Each chunk has the same timestamp.
@@ -719,4 +732,8 @@ pub struct CreateChatCompletionStreamResponse {
     pub finish_reason: Option<String>,
     /// The timestamp when the response was generated, in Unix time (seconds).
     pub response_timestamp: Option<u32>,
+
+    /// An optional field that will only be present when you set `stream_options: {"include_usage": true}` in your request.
+    /// When present, it contains a null value except for the last chunk which contains the token usage statistics for the entire request.
+    pub usage: Option<CompletionUsage>,
 }
