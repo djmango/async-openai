@@ -47,7 +47,7 @@ secrecy = { version = "0.8.0", features = ["serde"] }
 bytes = "1.6.0"
 eventsource-stream = "0.2.3"
 uuid = { version = "1.8.0", features = ["serde"] }
-utoipa = "4.2.3"
+utoipa = "5.0.0-alpha.0"
 
 [dev-dependencies]
 tokio-test = "0.4.4"
