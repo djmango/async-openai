@@ -406,6 +406,7 @@ pub struct InvisibilityMetadata {
     /// A bool to indicate wether this is a regenerate call, meaning the api should invalidate the
     /// history from the provided message_id onwards and generate a new response.
     pub regenerate_from_message_id: Option<Uuid>,
+    pub branch_from_message_id: Option<Uuid>
 }
 
 #[derive(Clone, Serialize, Default, Debug, Builder, Deserialize, PartialEq)]
