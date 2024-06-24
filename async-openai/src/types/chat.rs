@@ -3,6 +3,7 @@ use std::{collections::HashMap, pin::Pin};
 use derive_builder::Builder;
 use futures::Stream;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::error::OpenAIError;
@@ -171,7 +172,7 @@ pub enum ChatCompletionRequestUserMessageContent {
     Array(Vec<ChatCompletionRequestMessageContentPart>),
 }
 
-#[derive(Debug, Serialize, Deserialize, Default, Clone, Builder, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, ToSchema, Default, Clone, Builder, PartialEq)]
 #[builder(name = "ChatCompletionRequestUserMessageArgs")]
 #[builder(pattern = "mutable")]
 #[builder(setter(into, strip_option), default)]
