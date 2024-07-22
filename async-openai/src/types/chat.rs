@@ -577,6 +577,11 @@ pub struct CreateChatCompletionRequest {
     /// When set to true, only the request and the performance metrics will be recorded, input and output messages will be omitted from the log.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub disable_log: Option<bool>,
+
+    /// KeywordsAI
+    /// Use to link the request to a specific thread. This is useful for tracking the conversation history.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub thread_identifier: Option<String>,
 }
 
 /// Options for streaming response. Only set this when you set `stream: true`.
